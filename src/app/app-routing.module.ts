@@ -14,7 +14,7 @@ const routes: Routes = [
   {path:"sectionB", component:SectionBComponent},
   {path:'sectionC', component:SectionCFormFComponent},
   {path:'sectionD', component:SectionDformFComponent},
-  {path:'**',component:NotFoundComponent}
+ {path:'**',component:NotFoundComponent}
 ];
 
 @NgModule({

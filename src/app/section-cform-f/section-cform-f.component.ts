@@ -7,6 +7,8 @@ import { FailureMsgComponent } from '../failure-msg/failure-msg.component';
 import { SuccessMsgComponent } from '../success-msg/success-msg.component';
 
 import {jsPDF} from 'jspdf'
+import { FormService } from '../shared/form.service';
+import { UpdateMsgComponent } from '../update-msg/update-msg.component';
 
 
 export interface Diagnosis{
@@ -24,7 +26,6 @@ export interface Diagnosis{
 export class SectionCFormFComponent implements OnInit {
   @ViewChild("pdfContent",{static:false}) el!: ElementRef
 
-  sectionC:FormGroup;
   fontStyleControl = new FormControl();
   blankOneCondition:boolean = false;
   blankTwoCondition:boolean = false;
@@ -32,119 +33,57 @@ export class SectionCFormFComponent implements OnInit {
   options = {
     pagesplit: true
   };
-  constructor(private httpClient:HttpClient,private router:Router,private activatedRoute:ActivatedRoute,private dialog:MatDialog) { }
+  constructor(private router:Router,
+    private activatedRoute:ActivatedRoute,
+    private dialog:MatDialog,
+    public formService:FormService) { }
 
-  ngOnInit(): void {
-    this.sectionC = new FormGroup({
-      'doctorName': new FormControl(null),
-      'geneticDisease':new FormControl(null),
-      'geneticHistory':new FormControl(null),
-      'otherDiagnosis': new FormControl(null),
-      'diagnosisProcedureIndications': new FormGroup({
-
-        'chromosomalDisorders': new FormControl(null),
-        'metabolicDisorders': new FormControl(null),
-        'congenitalAnomaly': new FormControl(null),
-        'mentalDisability': new FormControl(null),
-        'Haemoglobinopathy': new FormControl(null),
-        'sexLinkedDisorders': new FormControl(null),
-        'singleGeneDisorder': new FormControl(null),
-        'previousChildOrChildrenWithOthers': new FormControl(null),
-        'previousChildOrChildrenWithOthersDetail': new FormControl(null),
-        'advancedMaternalAge': new FormControl(null),
-
-        'mother': new FormControl(null),
-        'father': new FormControl(null),
-        'sibling': new FormControl(null),
-        'diagnosisProcedureIndicationsOthers': new FormControl(null),
-        'diagnosisProcedureIndicationsOthersDetail': new FormControl(null)
-
-
-      }),
-      'pregnantWomanConsentDate': new FormControl(null),
-      'invasiveProcedures': new FormGroup({
-        'amniocentesis': new FormControl(false),
-        'chorionicVilliAspiration': new FormControl(false),
-        'fetalBiopsy': new FormControl(false),
-        'Cordocentesis': new FormControl(false),
-        "invasiveProceduresOthers":new FormControl(false),
-        'invasiveProceduresOthersDetail': new FormControl(null)
-
-      }),
-      'invasiveProcedureComplications': new FormControl(null),
-      'recommendedAditionalTests': new FormGroup({
-        'chromosomalStudies': new FormControl(false),
-        'biochemicalStudies':new FormControl(false),
-        'molecularStudies':new FormControl(false),
-        'preImplantationGenderDiagnosis': new FormControl(false),
-        'recommendedAditionalTestsOthers': new FormControl(false),
-        'recommendedAditionalTestsOthersDetail': new FormControl(null)
-
-
-      }),
-      'resultsOfTheProcedures': new FormControl(null),
-      'proceduresCariedoutDate': new FormControl(null),
-      'preNatalCOnveyedTo': new FormControl(""),
-      'preNatalCOnveyedOn': new FormControl(""),
-      'MTPIndiaction': new FormControl(null),
-      'dateFIlled': new FormControl(null),
-      'place':new FormControl(null)
-
-    })
-    // this.blankOneCondition = this.sectionC.value.preNatalCOnveyedTo.length >0
+  ngOnInit(): void {    // this.blankOneCondition = this.sectionC.value.preNatalCOnveyedTo.length >0
     // this.blankTwoCondition = this.sectionC.value.preNatalCOnveyedOn.length >0
     // console.log(this.blankOneCondition)
-
   }
 
   onSubmit(){
-    if (this.sectionC.valid){
-      const dialogRef = this.dialog.open(SuccessMsgComponent);
+    if (this.formService.sectionC.valid){
+          if (this.formService.sectionC.get('id').value == null){
+            const dialogRef = this.dialog.open(SuccessMsgComponent);
+            dialogRef.afterClosed().subscribe(result => {
+              //console.log(`Dialog result: ${result}`);
+          if (result == true){
+            this.formService.insertSectionc(this.formService.sectionC.value);
+            this.router.navigate(["../",'sectionD'],{relativeTo:this.activatedRoute})
+          }
+        });
+          }else{
+            const dialogRef = this.dialog.open(UpdateMsgComponent);
 
-      dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
-      });
-      console.log(this.sectionC.value);
-      this.httpClient.post('https://reactiveformsfirebaseproject-default-rtdb.asia-southeast1.firebasedatabase.app/sectionC.json',
-      this.sectionC.value).subscribe((response) => console.log(response));
-      this.router.navigate(["../", 'sectionD'],{relativeTo:this.activatedRoute})
+            dialogRef.afterClosed().subscribe(result => {
+              //console.log(`Dialog result: ${result}`);
+              if (result == true){
+                this.formService.updateSectionC(this.formService.sectionC.value);
+                this.router.navigate(['/']);
+              }
+          });
+          }
+          //console.log(this.formService.sectionC.value)
+      //console.log(this.formService.sectionC.value);
     }
     else{
       const dialogRef = this.dialog.open(FailureMsgComponent);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
+        //console.log(`Dialog result: ${result}`);
       });
-     console.log(this.sectionC.value);
+     //console.log(this.formService.sectionC.value);
     }
   }
 
 
 
   onClickReset(){
-    this.sectionC.reset();
+    this.formService.sectionC.reset();
   }
 
-  generatePDF(){
-    if (this.sectionC.valid){
-      let pdf = new jsPDF('p','pt','a4')
 
-      pdf.html(this.el.nativeElement,{
-        callback: (pdf) =>{
-          pdf.save("sectionC.pdf")
-        },
-        margin:20
-      })
-    }
-    else{
-      const dialogRef = this.dialog.open(FailureMsgComponent);
-
-      dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
-      });
-     console.log(this.sectionC.value);
-    }
-
-  }
 
 }

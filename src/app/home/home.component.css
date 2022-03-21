@@ -22,3 +22,14 @@ button {
 .button{
   margin-right: 10px;
 }
+.card{
+  margin: 10px;
+  padding: 10px;
+}
+h6{
+  font-weight: 600;
+}
+.btn-container{
+  display: flex;
+  justify-content: space-between;
+}

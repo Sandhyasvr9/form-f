@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "material-reactive-form-f": {
+      "hosting": {
+        "reactive-form-f-section-3-4": [
+          "material-reactive-form-f"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "material-reactive-form-f"
+  }
+}

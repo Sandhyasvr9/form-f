@@ -23,7 +23,16 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { SuccessMsgComponent } from './success-msg/success-msg.component';
 import { FailureMsgComponent } from './failure-msg/failure-msg.component';
 import {MatDialogModule} from '@angular/material/dialog';
-import {MatButtonModule} from '@angular/material/button'
+import {MatButtonModule} from '@angular/material/button';
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { environment } from '../environments/environment';
+import { provideDatabase,getDatabase } from '@angular/fire/database';
+import {AngularFireModule} from '@angular/fire/compat';
+import {AngularFireDatabaseModule} from '@angular/fire/compat/database';
+import { FormService } from './shared/form.service';
+import { UpdateMsgComponent } from './update-msg/update-msg.component';
+import { SubmitMsgComponent } from './submit-msg/submit-msg.component';
+import { DeleteMsgComponent } from './delete-msg/delete-msg.component';
 
 
 
@@ -38,6 +47,9 @@ import {MatButtonModule} from '@angular/material/button'
     SectionBComponent,
     SuccessMsgComponent,
     FailureMsgComponent,
+    UpdateMsgComponent,
+    SubmitMsgComponent,
+    DeleteMsgComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,9 +67,13 @@ import {MatButtonModule} from '@angular/material/button'
     SignaturePadModule,
     MatButtonToggleModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideDatabase(() => getDatabase())
   ],
-  providers: [],
+  providers: [FormService],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

@@ -7,6 +7,9 @@ import { FailureMsgComponent } from '../failure-msg/failure-msg.component';
 import { SuccessMsgComponent } from '../success-msg/success-msg.component';
 
 import {jsPDF} from 'jspdf'
+import { FormService } from '../shared/form.service';
+import { UpdateMsgComponent } from '../update-msg/update-msg.component';
+import { SubmitMsgComponent } from '../submit-msg/submit-msg.component';
 
 interface gender {
   value: string;
@@ -28,81 +31,58 @@ export class SectionDformFComponent implements OnInit {
 
   fontStyleControl = new FormControl();
 
-  sectionD: FormGroup;
-  constructor(private httpClient:HttpClient,private dialog:MatDialog,private router:Router,private activatedRoute:ActivatedRoute) { }
+
+  constructor(
+    private dialog:MatDialog,public formService:FormService,private router:Router) { }
 
   ngOnInit(): void {
-    this.sectionD = new FormGroup({
-      'name':new FormControl(null),
-      'diagnosis':new FormControl(null),
-      'dateOfDeclaretion': new FormControl(null),
-      'nameOfIdentification':new FormControl(null),
-      'age': new FormControl(null),
-      'gender': new FormControl(null),
-      'relationship': new FormControl(null),
-      'address':new  FormControl(null),
-      'contactNumber':new FormControl(null,Validators.compose([Validators.minLength(10),
-      Validators.maxLength(10),Validators.required])),
-      'dateOfAttestation': new FormControl(null),
-      'dateOfConductingTest': new FormControl(null),
-      'nameOfPersonConductingTest': new FormControl(null),
-      'nameOfPersonReciveingTest': new FormControl(null)
-    })
-  }
+      }
 
 
 
   onSubmit(){
-    if (this.sectionD.valid){
+    if (this.formService.sectionD.valid){
       // Adding success dialog content in each component
-      const dialogRef = this.dialog.open(SuccessMsgComponent);
+          if (this.formService.sectionD.get('id').value == null){
+            const dialogRef = this.dialog.open(SubmitMsgComponent);
 
-      dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
-      });
-      console.log(this.sectionD.value);
-      this.httpClient.post('https://reactiveformsfirebaseproject-default-rtdb.asia-southeast1.firebasedatabase.app/sectionD.json',
-      this.sectionD.value).subscribe((response) => console.log(response));
+            dialogRef.afterClosed().subscribe(result => {
+              // console.log(`Dialog result: ${result}`);
+              if (result == true){
+                this.formService.insertSectionD(this.formService.sectionD.value);
+              }
+          });
+          }else{
+            const dialogRef = this.dialog.open(UpdateMsgComponent);
 
-      this.sectionD.reset();
+            dialogRef.afterClosed().subscribe(result => {
+              //console.log(`Dialog result: ${result}`);
+              if (result == true){
+                this.formService.updateSectionD(this.formService.sectionD.value);
+              }
+          });
+          }
+          //console.log(this.formService.sectionD.value)
+          this.router.navigate(['/']);
+
+      //console.log(this.formService.sectionD.value);
+
      }
     else{
       // Adding failure dialog content in each component
       const dialogRef = this.dialog.open(FailureMsgComponent);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
+        //console.log(`Dialog result: ${result}`);
       });
-     console.log(this.sectionD.value);
+     //console.log(this.formService.sectionD.value);
     }
   }
 
   onClickReset(){
-    this.sectionD.reset();
+    this.formService.sectionD.reset();
   }
 
-  generatePDFSectionD(){
-    if (this.sectionD.valid){
-      let pdf = new jsPDF('p','pt','a4')
-      // let pageCount = pdf.internal.getNumberOfPages();
-
-      pdf.html(this.el.nativeElement,{
-        callback: (pdf) =>{
-          pdf.save("sectionD.pdf")
-        },
-        margin:20
-      })
-    }
-    else{
-      const dialogRef = this.dialog.open(FailureMsgComponent);
-
-      dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
-      });
-     console.log(this.sectionD.value);
-    }
-
-  }
 
 
 }

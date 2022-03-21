@@ -5,12 +5,112 @@
       <p>[See provison to Section 4(3), rule 9(4) and rule 10(1A)]</p>
       <p>(New amended on 4th February, 2014 notified on 31st January 2014)</p>
       <p><strong>FOR MAINTENANCE OF RECORD IN CASE OF PRENATAL DIAGNOSTIC TEST / PROCEDURE BY GENETIC CLINIC / ULTRASOUND CLINIC / IMAGING CENTRE</strong></p>
-       <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [formControl]="fontStyleControl">
-        <mat-button-toggle value="sectionA" routerLink="/sectionA" routerLinkActive="active">Section A</mat-button-toggle>
-        <mat-button-toggle value="sectionB" routerLink="/sectionB" routerLinkActive="active">Section B</mat-button-toggle>
-        <mat-button-toggle value="sectionC" routerLink="/sectionC">Section C</mat-button-toggle>
-        <mat-button-toggle value="sectionD" routerLink="/sectionD">Section D</mat-button-toggle>
-      </mat-button-toggle-group>
+       <button class="btn btn-dark" routerLink="/sectionA" (click)="onClickAdd()">Click to add details in form-F</button>
     </div>
   </div>
+</div>
+<div class="card" *ngIf="formArray.length > 0">
+<div *ngFor="let form of formArray" class="card card-body" >
+  <div *ngIf="form?.patientname">
+    <div class="btn-container">
+    <h6 >Section A</h6>
+    <div class="">
+      <button class="btn" (click)="this.formService.populateFormA(form)">Edit</button>
+      <button class="btn" (click)="onDelete(form.id)">Delete</button>
+    </div>
+  </div>
+     <p *ngIf="form.patientname">Patient name: {{form.patientname}}</p>
+    <p *ngIf="form.age">Age: {{form.age}}</p>
+    <p *ngIf="form.otherName">Husband's /Wife’s /Father’s /Mother’s Name:: {{form.otherName}}</p>
+    <p *ngIf="form.nameandAddress">Name and address of the Genetic clinic/ Imaging center: {{form.nameandAddress}}</p>
+    <p *ngIf="form.regdNo">Registration number: {{form.regdNo}}</p>
+    <P *ngIf="form.childrenGroup?.noOfChildren">Total Number of living childrens:
+      {{form.childrenGroup.noOfChildren}}</P>
+    <p *ngIf="form.childrenGroup?.livingSons">Number of living sons with age:
+    {{form.childrenGroup.livingSons}}</p>
+    <p *ngIf="form.childrenGroup?.livingDaughters">Number of living Daughters with age:
+    {{form.childrenGroup.livingDaughters}}</p>
+    <p *ngIf="form.referral?.referredBy">Referred by:{{form.referral.referredBy}}</p>
+    <p *ngIf="form?.lastDate">Last menstrual period or weeks of pregnancy:{{form?.lastDate}}</p>
+
+  </div>
+  <div *ngIf="form?.docter_name">
+    <div class="btn-container">
+      <h6>Section B</h6>
+      <div class="">
+        <button class="btn" (click)="this.formService.populateFormB(form)">Edit</button>
+        <button class="btn" (click)="onDelete(form.id)">Delete</button>
+      </div>
+    </div>
+      <p>Doctor name: {{form.docter_name}}</p>
+      <p *ngIf="form.checkBoxs">Indication/s for diagnosis procedure:</p>
+      <ul *ngFor="let item of form.checkBoxs | keyvalue">
+        <li>{{item.key}}</li>
+      </ul>
+      <p *ngIf="form.procedure && form.procedure !== 'AnyOther'">Procedure: {{form.procedure}}</p>
+      <p *ngIf="form.procedure && form.procedure == 'AnyOther'">Procedure: {{form.otherProcedure}}</p>
+      <p *ngIf="form.dateOfDeclaration">Date of declaration: {{form.dateOfDeclaration | date}}</p>
+      <p *ngIf="form.dateOfProcedure">Date of Procedure: {{form.dateOfProcedure | date}}</p>
+      <p *ngIf="form.resultOfProcedure">Result of procedure: {{form.resultOfProcedure}}</p>
+      <p *ngIf="form.resultConveyedTo">Result conveyed to: {{form.resultConveyedTo}}</p>
+      <p *ngIf="form.resultConveyedOn">Result onveyed on: {{form.resultConveyedOn | date}}</p>
+      <p *ngIf="form.indication">Any indication for MTP: {{form.indication}}</p>
+      <p *ngIf="form.date">Date: {{form.date | date}}</p>
+      <p *ngIf="form.place">place: {{form.place}}</p>
+   </div>
+   <div *ngIf="form?.doctorName">
+    <div class="btn-container">
+      <h6>Section C</h6>
+      <div class="">
+        <button class="btn" (click)="this.formService.populateFormC(form)">Edit</button>
+        <button class="btn" (click)="onDelete(form.id)">Delete</button>
+      </div>
+    </div>
+    <p>Name of the doctor performing the procedure: {{form.doctorName}}</p>
+    <p>Genetic History: {{form.geneticHistory}}</p>
+    <p *ngIf="form.diagnosisProcedureIndications">Indications for diagnosis procedure/s: </p>
+    <ul *ngFor="let item of form.diagnosisProcedureIndications | keyvalue">
+      <li>{{item.key}}</li>
+    </ul>
+    <p>date on which person obtained in form-G: {{form.pregnantWomanConsentDate | date}}</p>
+    <p *ngIf="form.invasiveProcedures">Invasive proceures carried out: </p>
+    <ul *ngFor="let item of form.invasiveProcedures | keyvalue">
+      <li>{{item.key}}</li>
+    </ul>
+    <p *ngIf="form.recommendedAditionalTests">Additional tests recommended: </p>
+    <ul *ngFor="let item of form.recommendedAditionalTests | keyvalue">
+      <li>{{item.key}}</li>
+    </ul>
+    <p>result of the procedure: {{form.resultsOfTheProcedures}}</p>
+    <p>Date on which procedures carried out: {{form.proceduresCariedoutDate | date}}</p>
+    <p>Result of procedure conveyed to: {{form.preNatalCOnveyedTo}}</p>
+    <p>result of procedure conveyed on: {{form.preNatalCOnveyedOn | date}}</p>
+    <p>Any indication for MTP: {{form.MTPIndiaction}}</p>
+    <p>Date: {{form.dateFIlled | date}}</p>
+    <p>place:{{form.place}}</p>
+
+   </div>
+   <div *ngIf="form.name">
+    <div class="btn-container">
+      <h6>Section D</h6>
+      <div class="">
+        <button class="btn" (click)="this.formService.populateFormD(form)">Edit</button>
+        <button class="btn" (click)="onDelete(form.id)">Delete</button>
+      </div>
+    </div>
+    <p>Name of Identification: {{form.nameOfIdentification}}</p>
+    <p>Age: {{form.age}}</p>
+    <p>Gender: {{form.gender}}</p>
+    <p>Name: {{form.name}}</p>
+    <p>Relation: {{form.relationship}}</p>
+    <p>Contact No: {{form.contactNumber}}</p>
+    <p>Date of declaration: {{form.dateOfDeclaretion | date}}</p>
+    <p>Address: {{form.address}}</p>
+    <p>Date of Attestation: {{form.dateOfAttestation | date}}</p>
+    <p>Name of person conducting test: {{form.nameOfPersonConductingTest}}</p>
+    <p>Name of person receiviing test: {{form.nameOfPersonReciveingTest}}</p>
+    <p>Date of conducting test: {{form.dateOfConductingTest | date}}</p>
+   </div>
+
+</div>
 </div>

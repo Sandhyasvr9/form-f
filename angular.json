@@ -103,6 +103,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "reactive-form-f-section-3-4:build:production",
+            "firebaseProject": "material-reactive-form-f",
+            "firebaseHostingSite": "material-reactive-form-f"
+          }
         }
       }
     }
